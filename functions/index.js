@@ -6,6 +6,7 @@ const cors = require('cors');
 app.use(cors({origin: true}));
 var admin = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
+var json2html = require('node-json2html')
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -14,9 +15,6 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
 //
 exports.helloWorld = functions.https.onRequest((request, response) => {
     response.send(JSON.stringify("Hello from Firebase!"));
@@ -27,22 +25,115 @@ app.get('/hello-world', (req, res) => {
 });
 
 // create
-app.post('/api/create', (req, res) => {
+app.post('/api/add/collection/:collection_id/permission/:permission_id', (req, res) => {
     (async () => {
         try {
-            await db
-                .collection('items')
-                .doc(req.body.documentId)
+            await db.collection(req.params.collection_id)
+                .doc(req.params.permission_id)
                 .set({
-                    name: req.body.name,
-                    email: req.body.email
-                });
+                    [req.body.id]: {
+                        name: req.body.name,
+                        email: req.body.email,
+                        phone_number: req.body.phone_number
+                    }
+                }, { merge: true}
+                );
+
             return res.status(200).send('OK');
         } catch (error) {
             console.log(error);
             return res.status(500).send('ERROR' + error);
         }
     })();
+});
+
+//pre get
+// app.get('/api/get/:tagId', (req, res) => {
+//     res.send("tagId is set to " + req.params.tagId);
+// });
+
+//get
+app.get('/api/get/:collection_id', (req, res) => {
+    (async () => {
+        try {
+            var txt_data = "";
+            await db.collection(req.params.collection_id)
+                .get()
+                .then(snap => {
+                    snap.forEach(doc => {
+                        console.log(doc.data());
+                        txt_data = txt_data + " " + JSON.stringify(doc.data());
+                        txt_data = txt_data + " " + doc.id;
+                    })
+                });
+            return res.status(200).send("OK [" + req.params.collection_id + "]: ---> " + txt_data);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send('ERROR' + error);
+        }
+    })()
+});
+
+app.get('/api/get/user/:collection_id/permission/:permission_id', (req, res) => {
+    (async () => {
+        try {
+            var txt_data = "";
+            await db.collection(req.params.collection_id).doc(req.params.permission_id)
+                .get()
+                .then(snap => {
+                        console.log(snap.data());
+                        txt_data = txt_data + " " + JSON.stringify(snap.data());
+                        txt_data = txt_data + " " + snap.id;
+                });
+            return res.status(200).send("OK [" + req.params.collection_id + "]: ---> " + txt_data);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send('ERROR' + error);
+        }
+    })()
+});
+
+var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'wapn.szkola@gmail.com',
+        pass: 'c510mazowsze'
+    }
+});
+
+app.get('/api/send_email/user/:collection_id', (req, res) => {
+    var html_page = "";
+    let template = {'<>':'li','text':'${name} ${email}'};
+    try {
+        db.collection(req.params.collection_id)
+            .get()
+            .then(snap => {
+                snap.forEach(doc => {
+                    html_page = html_page + JSON.stringify(doc.data());
+                })
+            });
+    } catch  (error) {
+        console.log(error);
+        return res.status(500).send('ERROR' + error);
+    }
+    const mailOptions = {
+
+        from: `wapn.szkola@gmail.com`,
+        to: req.params.collection_id,
+        subject: 'Test mail',
+        html: '<p>${html_page.toString()}</p>'
+    };
+    return transporter.sendMail(mailOptions, (error, data) => {
+        if (error) {
+            return res.send(error.toString());
+        }
+        console.log(data);
+        console.log(html_page.toString())
+        var data = JSON.stringify(data)
+        return res.send(`Sent! ${data}`);
+    });
 });
 
 exports.app = functions.https.onRequest(app);
@@ -91,33 +182,25 @@ const APP_NAME = 'Cloud Storage for Firebase quickstart';
  * Sends a welcome email to new user.
  */
 // [START onCreateTrigger]
-exports.sendWelcomeEmail2 = functions.https.onRequest((req, resp) => {
-    const email = 'wapn.szkola@gmail.com'; // The email of the user.
-    const displayName = "Kamil"; // The display name of the user.
-    // [END eventAttributes]
-    sendWelcomeEmail(email, displayName);
-})
-
-exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
-// [END onCreateTrigger]
-    // [START eventAttributes]
-    const email = user.email; // The email of the user.
-    const displayName = user.displayName; // The display name of the user.
-    // [END eventAttributes]
-
-    return sendWelcomeEmail(email, displayName);
-});
+// exports.sendWelcomeEmail2 = functions.https.onRequest((req, resp) => {
+//     const email = 'wapn.szkola@gmail.com'; // The email of the user.
+//     const displayName = "Kamil"; // The display name of the user.
+//     // [END eventAttributes]
+//     sendWelcomeEmail(email, displayName);
+// })
+//
+// exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
+// // [END onCreateTrigger]
+//     // [START eventAttributes]
+//     const email = user.email; // The email of the user.
+//     const displayName = user.displayName; // The display name of the user.
+//     // [END eventAttributes]
+//
+//     return sendWelcomeEmail(email, displayName);
+// });
 
 //google account credentials used to send email
-var transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: 'wapn.szkola@gmail.com',
-        pass: 'c510mazowsze'
-    }
-});
+
 
 /*exports.sendEmail = functions.firestore
     .document('orders/{orderId}')
@@ -140,42 +223,30 @@ var transporter = nodemailer.createTransport({
         });
     });*/
 
-exports.sendMailOverHTTP = functions.https.onRequest((req, res) => {
-    const mailOptions = {
-        from: `wapn.szkola@gmail.com`,
-        to: req.url.substring(req.url.indexOf("/") + 1),
-        subject: 'Test mail',
-        html: `<h1>Order Confirmation</h1>
-                            <p>
-                               <b>Email: </b>${req.body.mail}<br>
-                               <b>Email: </b>${req.body.email}<br>
-                               <b>Email: </b>${req.body.mailer}<br>
-                               <b>Email: </b>${req.query.mail}<br>
-                               <b>Email: </b>${req.query.email}<br>
-                               <b>Email: </b>${req.query.url}<br>
-                               <b>Email: </b>${req.body.url}<br>
-                               <b>Email: </b>${req.app}<br>
-                               <b>Email: </b>${req.url}<br>
-                               <b>Pozdro</b>
-                            </p>`
-    };
-    return transporter.sendMail(mailOptions, (error, data) => {
-        if (error) {
-            return res.send(error.toString());
-        }
-        var data = JSON.stringify(data)
-        return res.send(`Sent! ${data}`);
-    });
-});
-
-exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
-    .onCreate((snapshot, context) => {
-        // Grab the current value of what was written to the Realtime Database.
-        const original = snapshot.val();
-        console.log('Uppercasing', context.params.pushId, original);
-        const uppercase = original.toUpperCase();
-        // You must return a Promise when performing asynchronous tasks inside a Functions such as
-        // writing to the Firebase Realtime Database.
-        // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
-        return snapshot.ref.parent.child('uppercase').set(uppercase);
-    });
+// exports.sendMailOverHTTP = functions.https.onRequest((req, res) => {
+//     const mailOptions = {
+//         from: `wapn.szkola@gmail.com`,
+//         to: req.url.substring(req.url.indexOf("/") + 1),
+//         subject: 'Test mail',
+//         html: `<h1>Kontakty:</h1>
+//                             <p>
+//                                <b>1: </b>${req.body.name}<br>
+//                                <b>2: </b>${req.body.email}<br>
+//                                <b>3: </b>${req.body.mailer}<br>
+//                                <b>Email: </b>${req.query.mail}<br>
+//                                <b>Email: </b>${req.query.email}<br>
+//                                <b>Email: </b>${req.query.url}<br>
+//                                <b>Email: </b>${req.body.url}<br>
+//                                <b>Email: </b>${req.app}<br>
+//                                <b>Email: </b>${req.url}<br>
+//                                <b>Pozdro</b>
+//                             </p>`
+//     };
+//     return transporter.sendMail(mailOptions, (error, data) => {
+//         if (error) {
+//             return res.send(error.toString());
+//         }
+//         var data = JSON.stringify(data)
+//         return res.send(`Sent! ${data}`);
+//     });
+// });
