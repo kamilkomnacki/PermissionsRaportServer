@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3203a32e-6a07-4a3c-b312-35402af9fcea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/contacts.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/main.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/messages.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/permission_header.pug" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package-lock.json" afterDir="false" />
@@ -25,7 +29,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
+    <property name="settings.editor.selected.configurable" value="watcher.settings" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RunDashboard">
@@ -54,8 +58,17 @@
       <workItem from="1573298189093" duration="1041000" />
       <workItem from="1573300180331" duration="5233000" />
       <workItem from="1573673419198" duration="7080000" />
-      <workItem from="1573815514560" duration="27820000" />
+      <workItem from="1573815514560" duration="28146000" />
+      <workItem from="1573909529992" duration="26025000" />
     </task>
+    <task id="LOCAL-00001" summary="add send email, get and add methods">
+      <created>1573851483593</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1573851483593</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -66,10 +79,16 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add send email, get and add methods" />
+    <option name="LAST_COMMIT_MESSAGE" value="add send email, get and add methods" />
   </component>
 </project>

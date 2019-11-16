@@ -6,7 +6,10 @@ const cors = require('cors');
 app.use(cors({origin: true}));
 var admin = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
-var json2html = require('node-json2html')
+var json2html = require('node-json2html');
+var pug = require('pug');
+
+
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -15,30 +18,48 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-//
-exports.helloWorld = functions.https.onRequest((request, response) => {
-    response.send(JSON.stringify("Hello from Firebase!"));
-});
-
 app.get('/hello-world', (req, res) => {
     return res.status(200).send('Hello World!');
 });
 
-// create
-app.post('/api/add/collection/:collection_id/permission/:permission_id', (req, res) => {
+app.post('/api/add/collection/:collection_id/permission/CONTACTS', (req, res) => {
     (async () => {
         try {
-            await db.collection(req.params.collection_id)
-                .doc(req.params.permission_id)
-                .set({
-                    [req.body.id]: {
-                        name: req.body.name,
-                        email: req.body.email,
-                        phone_number: req.body.phone_number
-                    }
-                }, { merge: true}
-                );
+            await Promise.all(req.body.map((object) => {
+                    return db.collection(req.params.collection_id)
+                        .doc(req.params.collection_id)
+                        .collection("CONTACTS")
+                        .doc(object.id.toString())
+                        .set({
+                            id: object.id,
+                            name: object.name,
+                            email: object.email,
+                            phone_number: object.phone_number
+                        }, { merge: true});
+                }));
+                return res.status(200).send('OK');
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send('ERROR' + error);
+        }
+    })();
+});
 
+app.post('/api/add/collection/:collection_id/permission/MESSAGES', (req, res) => {
+    (async () => {
+        try {
+            await Promise.all(req.body.map((object) => {
+                return db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection("MESSAGES")
+                    .doc(object.id.toString())
+                    .set({
+                        id: object.id,
+                        name: object.name,
+                        message: object.message,
+                        phone_number: object.phone_number
+                    }, { merge: true});
+            }));
             return res.status(200).send('OK');
         } catch (error) {
             console.log(error);
@@ -47,23 +68,43 @@ app.post('/api/add/collection/:collection_id/permission/:permission_id', (req, r
     })();
 });
 
-//pre get
-// app.get('/api/get/:tagId', (req, res) => {
-//     res.send("tagId is set to " + req.params.tagId);
-// });
-
 //get
-app.get('/api/get/:collection_id', (req, res) => {
+app.get('/api/get/:collection_id/permission/CONTACTS', (req, res) => {
     (async () => {
         try {
             var txt_data = "";
             await db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("CONTACTS")
                 .get()
                 .then(snap => {
                     snap.forEach(doc => {
                         console.log(doc.data());
                         txt_data = txt_data + " " + JSON.stringify(doc.data());
-                        txt_data = txt_data + " " + doc.id;
+                        // txt_data = txt_data + " " + doc.id;
+                    })
+                });
+            return res.status(200).send("OK [" + req.params.collection_id + "]: ---> " + txt_data);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send('ERROR' + error);
+        }
+    })()
+});
+
+app.get('/api/get/:collection_id/permission/MESSAGES', (req, res) => {
+    (async () => {
+        try {
+            var txt_data = "";
+            await db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("MESSAGES")
+                .get()
+                .then(snap => {
+                    snap.forEach(doc => {
+                        console.log(doc.data());
+                        txt_data = txt_data + " " + JSON.stringify(doc.data());
+                        // txt_data = txt_data + " " + doc.id;
                     })
                 });
             return res.status(200).send("OK [" + req.params.collection_id + "]: ---> " + txt_data);
@@ -78,7 +119,8 @@ app.get('/api/get/user/:collection_id/permission/:permission_id', (req, res) => 
     (async () => {
         try {
             var txt_data = "";
-            await db.collection(req.params.collection_id).doc(req.params.permission_id)
+            await db.collection(req.params.collection_id)
+                .doc(req.params.permission_id)
                 .get()
                 .then(snap => {
                         console.log(snap.data());
@@ -103,37 +145,108 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-app.get('/api/send_email/user/:collection_id', (req, res) => {
-    var html_page = "";
-    let template = {'<>':'li','text':'${name} ${email}'};
-    try {
-        db.collection(req.params.collection_id)
-            .get()
-            .then(snap => {
-                snap.forEach(doc => {
-                    html_page = html_page + JSON.stringify(doc.data());
-                })
-            });
-    } catch  (error) {
-        console.log(error);
-        return res.status(500).send('ERROR' + error);
-    }
-    const mailOptions = {
 
-        from: `wapn.szkola@gmail.com`,
-        to: req.params.collection_id,
-        subject: 'Test mail',
-        html: '<p>${html_page.toString()}</p>'
-    };
-    return transporter.sendMail(mailOptions, (error, data) => {
-        if (error) {
-            return res.send(error.toString());
+/*
+        "<!DOCTYPE html>
+            <html>
+	            <head>
+		            <meta charset='UTF-8'>
+			        <title>JSON To HTML using codebeautify.org</title>
+		        </head>
+		        <body>
+			        <table border=1>
+				        <thead>
+					        <tr>
+						        <th>id</th>
+						        <th>name</th>
+						        <th>email</th>
+						        <th>phone_number</th>
+					        </tr>
+				        </thead>
+                        <tbody>
+                            <tr>
+                                <td>45</td>
+    						    <td>Stack</td>
+    						    <td>stack@overflow.com</td>
+    						    <td>+48 111 222 333</td>
+    					    </tr>
+                        </tbody>
+			        </table>
+		        </body>
+	        </html>"
+
+ */
+function contactsToHTML() {
+
+}
+
+app.get('/api/send_email/user/:collection_id', (req, res) => {
+    const mainPUGFunction = pug.compileFile("./main.pug");
+    const permissionHeaderPUGFunction = pug.compileFile("./permission_header.pug");
+    const contentPUGFunction = pug.compileFile("./contacts.pug");
+    var html_page = "";/*mainPUGFunction();*/
+    var html_page_contents = "";
+    (async () => {
+        try {
+            await db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .listCollections()
+                .then(snap_col1 => {
+                    snap_col1.forEach(col1 => {
+                        html_page_contents += " " + col1.id.toString();
+                        console.log(col1.id.toString());
+                        col1.listDocuments()
+                            .then(snap_doc1 => {
+                                snap_doc1.forEach(doc1 => {
+                                    html_page_contents += " " + doc1.id.toString();
+                                    console.log(doc1.id.toString());
+                                });
+                            })
+                            .catch(error => {
+                                return res.status(500).send("ERROR1: " + error);
+                            })
+                            .then(status => {
+                                html_page += html_page_contents;
+                                console.log("all content: " + html_page)
+                                return res.status(200).read(html_page);
+                            })
+                    });
+                })
+                .catch(error => {
+                    return res.status(500).send(error);
+                })
+
+                        /*html_page_contents += permissionHeaderPUGFunction(doc.id);
+                        for(const key in doc.data()) {
+                            const value = doc[key].toString;
+                            html_page_contents += contentPUGFunction({
+                                permission_name: value
+                            })
+                        }*/
+
+                    // })
+                // });
+
+
+            // const mailOptions = {
+            //
+            //     from: `wapn.szkola@gmail.com`,
+            //     to: req.params.collection_id,
+            //     subject: 'Test mail',
+            //     html: html_page
+            // };
+            // return transporter.sendMail(mailOptions, (error, data) => {
+            //     if (error) {
+            //         return res.send(error.toString());
+            //     }
+            //     var data = JSON.stringify(data)
+            //     return res.send(`Sent! ${data} ${html_page}`);
+            // });
+        } catch  (error) {
+            console.log(error);
+            return res.status(500).send('ERROR' + error);
         }
-        console.log(data);
-        console.log(html_page.toString())
-        var data = JSON.stringify(data)
-        return res.send(`Sent! ${data}`);
-    });
+    })();
 });
 
 exports.app = functions.https.onRequest(app);
