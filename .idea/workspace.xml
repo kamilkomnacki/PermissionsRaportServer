@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3203a32e-6a07-4a3c-b312-35402af9fcea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/contacts.pug" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/main.pug" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/messages.pug" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/permission_header.pug" afterDir="false" />
+    <list default="true" id="3203a32e-6a07-4a3c-b312-35402af9fcea" name="Default Changelist" comment="improve crud and implement pug">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,6 +14,12 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
   </component>
   <component name="ProjectId" id="1T1bHqEyi7gQjUuJiLYcCpGe6fo" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -59,7 +59,9 @@
       <workItem from="1573300180331" duration="5233000" />
       <workItem from="1573673419198" duration="7080000" />
       <workItem from="1573815514560" duration="28146000" />
-      <workItem from="1573909529992" duration="26025000" />
+      <workItem from="1573909529992" duration="26241000" />
+      <workItem from="1574101842953" duration="11618000" />
+      <workItem from="1574187303592" duration="8036000" />
     </task>
     <task id="LOCAL-00001" summary="add send email, get and add methods">
       <created>1573851483593</created>
@@ -68,7 +70,14 @@
       <option name="project" value="LOCAL" />
       <updated>1573851483593</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="improve crud and implement pug">
+      <created>1573944294563</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1573944294563</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -89,6 +98,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add send email, get and add methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="add send email, get and add methods" />
+    <MESSAGE value="improve crud and implement pug" />
+    <option name="LAST_COMMIT_MESSAGE" value="improve crud and implement pug" />
   </component>
 </project>

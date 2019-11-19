@@ -10,7 +10,6 @@ var json2html = require('node-json2html');
 var pug = require('pug');
 
 
-
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://permissionraport.firebaseio.com"
@@ -26,18 +25,18 @@ app.post('/api/add/collection/:collection_id/permission/CONTACTS', (req, res) =>
     (async () => {
         try {
             await Promise.all(req.body.map((object) => {
-                    return db.collection(req.params.collection_id)
-                        .doc(req.params.collection_id)
-                        .collection("CONTACTS")
-                        .doc(object.id.toString())
-                        .set({
-                            id: object.id,
-                            name: object.name,
-                            email: object.email,
-                            phone_number: object.phone_number
-                        }, { merge: true});
-                }));
-                return res.status(200).send('OK');
+                return db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection("CONTACTS")
+                    .doc(object.id.toString())
+                    .set({
+                        id: object.id,
+                        name: object.name,
+                        email: object.email,
+                        phone_number: object.phone_number
+                    }, {merge: true});
+            }));
+            return res.status(200).send('OK');
         } catch (error) {
             console.log(error);
             return res.status(500).send('ERROR' + error);
@@ -58,7 +57,7 @@ app.post('/api/add/collection/:collection_id/permission/MESSAGES', (req, res) =>
                         name: object.name,
                         message: object.message,
                         phone_number: object.phone_number
-                    }, { merge: true});
+                    }, {merge: true});
             }));
             return res.status(200).send('OK');
         } catch (error) {
@@ -123,9 +122,9 @@ app.get('/api/get/user/:collection_id/permission/:permission_id', (req, res) => 
                 .doc(req.params.permission_id)
                 .get()
                 .then(snap => {
-                        console.log(snap.data());
-                        txt_data = txt_data + " " + JSON.stringify(snap.data());
-                        txt_data = txt_data + " " + snap.id;
+                    console.log(snap.data());
+                    txt_data = txt_data + " " + JSON.stringify(snap.data());
+                    txt_data = txt_data + " " + snap.id;
                 });
             return res.status(200).send("OK [" + req.params.collection_id + "]: ---> " + txt_data);
         } catch (error) {
@@ -176,77 +175,89 @@ var transporter = nodemailer.createTransport({
 	        </html>"
 
  */
-function contactsToHTML() {
-
+function getDocuments(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = "";
+        (async () => {
+            try {
+            await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            html_content += " " + doc.id.toString();
+                            console.log(doc.id.toString());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error 11: " + error);
+                    })
+            } catch (e) {
+                reject("Error 22: " + e);
+            }
+        })();
+    })
 }
+
+let PERMISSION_IDS = ["CONTACTS", "MESSAGES", "STORAGE"];
 
 app.get('/api/send_email/user/:collection_id', (req, res) => {
     const mainPUGFunction = pug.compileFile("./main.pug");
     const permissionHeaderPUGFunction = pug.compileFile("./permission_header.pug");
     const contentPUGFunction = pug.compileFile("./contacts.pug");
-    var html_page = "";/*mainPUGFunction();*/
+    var html_page = "";
     var html_page_contents = "";
+
+
     (async () => {
         try {
-            await db.collection(req.params.collection_id)
-                .doc(req.params.collection_id)
-                .listCollections()
-                .then(snap_col1 => {
-                    snap_col1.forEach(col1 => {
-                        html_page_contents += " " + col1.id.toString();
-                        console.log(col1.id.toString());
-                        col1.listDocuments()
-                            .then(snap_doc1 => {
-                                snap_doc1.forEach(doc1 => {
-                                    html_page_contents += " " + doc1.id.toString();
-                                    console.log(doc1.id.toString());
-                                });
-                            })
-                            .catch(error => {
-                                return res.status(500).send("ERROR1: " + error);
-                            })
-                            .then(status => {
-                                html_page += html_page_contents;
-                                console.log("all content: " + html_page)
-                                return res.status(200).read(html_page);
-                            })
-                    });
+            await Promise.all([
+                getDocuments(PERMISSION_IDS[0], req, res),
+                getDocuments(PERMISSION_IDS[1], req, res),
+                getDocuments(PERMISSION_IDS[2], req, res)])
+                .then(answer => {
+                    var html = mainPUGFunction();
+                    html += permissionHeaderPUGFunction({permission_name: "Kontakty"});
+                    html += contentPUGFunction();
+
+                    html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
+                    html += contentPUGFunction();
+
+                    html += permissionHeaderPUGFunction({permission_name: "Pamięć"});
+                    html += contentPUGFunction();
+
+
+                    return res.status(200).send(html);
                 })
                 .catch(error => {
-                    return res.status(500).send(error);
+                    return res.status(500).send('ERROR1' + error);
                 })
-
-                        /*html_page_contents += permissionHeaderPUGFunction(doc.id);
-                        for(const key in doc.data()) {
-                            const value = doc[key].toString;
-                            html_page_contents += contentPUGFunction({
-                                permission_name: value
-                            })
-                        }*/
-
-                    // })
-                // });
-
-
-            // const mailOptions = {
-            //
-            //     from: `wapn.szkola@gmail.com`,
-            //     to: req.params.collection_id,
-            //     subject: 'Test mail',
-            //     html: html_page
-            // };
-            // return transporter.sendMail(mailOptions, (error, data) => {
-            //     if (error) {
-            //         return res.send(error.toString());
-            //     }
-            //     var data = JSON.stringify(data)
-            //     return res.send(`Sent! ${data} ${html_page}`);
-            // });
-        } catch  (error) {
-            console.log(error);
-            return res.status(500).send('ERROR' + error);
+        } catch (e) {
+            return res.status(500).send('ERROR2' + e);
         }
     })();
+
+    // const mailOptions = {
+    //
+    //     from: `wapn.szkola@gmail.com`,
+    //     to: req.params.collection_id,
+    //     subject: 'Test mail',
+    //     html: html_page
+    // };
+    // return transporter.sendMail(mailOptions, (error, data) => {
+    //     if (error) {
+    //         return res.send(error.toString());
+    //     }
+    //     var data = JSON.stringify(data)
+    //     return res.send(`Sent! ${data} ${html_page}`);
+    // });
+    //     } catch (error) {
+    //         console.log(error);
+    //         return res.status(500).send('ERROR' + error);
+    //     }
+    // })();
 });
 
 exports.app = functions.https.onRequest(app);
