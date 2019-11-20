@@ -177,7 +177,7 @@ var transporter = nodemailer.createTransport({
  */
 function getDocuments(permission_id, req, res) {
     return new Promise((resolve, reject) => {
-        var html_content = "";
+        var html_content = [];
         (async () => {
             try {
             await db.collection(req.params.collection_id)
@@ -186,7 +186,12 @@ function getDocuments(permission_id, req, res) {
                     .get()
                     .then(snap_col1 => {
                         snap_col1.forEach(doc => {
-                            html_content += " " + doc.id.toString();
+                            var row = [];
+                            row.push(doc.data().id);
+                            row.push(doc.data().name);
+                            row.push(doc.data().phone_number);
+                            row.push(doc.data().email);
+                            html_content.push(row);
                             console.log(doc.id.toString());
                         });
                         resolve(html_content);
@@ -199,6 +204,14 @@ function getDocuments(permission_id, req, res) {
             }
         })();
     })
+}
+
+function getCol(matrix, col){
+    var column = [];
+    for(var i=0; i<matrix.length; i++){
+        column.push(matrix[i][col]);
+    }
+    return column;
 }
 
 let PERMISSION_IDS = ["CONTACTS", "MESSAGES", "STORAGE"];
@@ -220,16 +233,34 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                 .then(answer => {
                     var html = mainPUGFunction();
                     html += permissionHeaderPUGFunction({permission_name: "Kontakty"});
-                    html += contentPUGFunction();
+                    console.log("ANSWER0: " + answer[0]);
+                    html += contentPUGFunction({
+                        headers: ["ID", "Nazwa", "Numer telefonu", "Email"],
+                        ids: getCol(answer[0], 0),
+                        names: getCol(answer[0], 1),
+                        phone_numbers: getCol(answer[0], 2),
+                        emails: getCol(answer[0], 3)
+                    });
 
-                    html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
-                    html += contentPUGFunction();
+                    // html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
+                    // html += contentPUGFunction();
 
-                    html += permissionHeaderPUGFunction({permission_name: "Pamięć"});
-                    html += contentPUGFunction();
+                    // html += permissionHeaderPUGFunction({permission_name: "Pamięć"});
+                    // html += contentPUGFunction();
 
-
-                    return res.status(200).send(html);
+                    const mailOptions = {
+                        from: `wapn.szkola@gmail.com`,
+                        to: req.params.collection_id,
+                        subject: 'Test mail',
+                        html: html
+                    };
+                    return transporter.sendMail(mailOptions, (error, data) => {
+                        if (error) {
+                            return res.send(error.toString());
+                        }
+                        // var data = JSON.stringify(data)
+                        return res.send("Sent! " + data  + "html:" + html);
+                    });
                 })
                 .catch(error => {
                     return res.status(500).send('ERROR1' + error);
@@ -238,26 +269,6 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
             return res.status(500).send('ERROR2' + e);
         }
     })();
-
-    // const mailOptions = {
-    //
-    //     from: `wapn.szkola@gmail.com`,
-    //     to: req.params.collection_id,
-    //     subject: 'Test mail',
-    //     html: html_page
-    // };
-    // return transporter.sendMail(mailOptions, (error, data) => {
-    //     if (error) {
-    //         return res.send(error.toString());
-    //     }
-    //     var data = JSON.stringify(data)
-    //     return res.send(`Sent! ${data} ${html_page}`);
-    // });
-    //     } catch (error) {
-    //         console.log(error);
-    //         return res.status(500).send('ERROR' + error);
-    //     }
-    // })();
 });
 
 exports.app = functions.https.onRequest(app);
