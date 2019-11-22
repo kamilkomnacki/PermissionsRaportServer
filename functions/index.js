@@ -59,10 +59,10 @@ app.post('/api/add/collection/:collection_id/permission/MESSAGES', (req, res) =>
                         phone_number: object.phone_number
                     }, {merge: true});
             }));
-            return res.status(200).send('OK');
+            return res.status(200).send( JSON.stringify("{OK}"));
         } catch (error) {
             console.log(error);
-            return res.status(500).send('ERROR' + error);
+            return res.status(500).send( JSON.stringify("{"+error+"}"));
         }
     })();
 });
@@ -79,17 +79,21 @@ app.get('/api/get/:collection_id/permission/CONTACTS', (req, res) => {
                 .then(snap => {
                     snap.forEach(doc => {
                         console.log(doc.data());
-                        txt_data = txt_data + " " + JSON.stringify(doc.data());
+
+                        txt_data = txt_data + JSON.stringify(doc.data()) + ",";
                         // txt_data = txt_data + " " + doc.id;
                     })
                 });
-            return res.status(200).send("OK [" + req.params.collection_id + "]: ---> " + txt_data);
+            txt_data = txt_data.substring(0,txt_data.length-1);
+            console.log(txt_data);
+            return res.status(200).send("{\"contacts\":[" + txt_data + "]}");
         } catch (error) {
             console.log(error);
             return res.status(500).send('ERROR' + error);
         }
     })()
 });
+
 
 app.get('/api/get/:collection_id/permission/MESSAGES', (req, res) => {
     (async () => {

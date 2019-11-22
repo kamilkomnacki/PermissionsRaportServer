@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3203a32e-6a07-4a3c-b312-35402af9fcea" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/contacts.pug" beforeDir="false" afterPath="$PROJECT_DIR$/functions/contacts.pug" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -62,7 +61,11 @@
       <workItem from="1573909529992" duration="26241000" />
       <workItem from="1574101842953" duration="11618000" />
       <workItem from="1574187303592" duration="8068000" />
-      <workItem from="1574273353773" duration="9027000" />
+      <workItem from="1574273353773" duration="9354000" />
+      <workItem from="1574422060491" duration="7707000" />
+      <workItem from="1574443424978" duration="651000" />
+      <workItem from="1574444321812" duration="862000" />
+      <workItem from="1574445757685" duration="1539000" />
     </task>
     <task id="LOCAL-00001" summary="add send email, get and add methods">
       <created>1573851483593</created>
@@ -85,7 +88,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574200219062</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="form table in html and send to email">
+      <created>1574282865029</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1574282865029</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -108,6 +118,7 @@
     <MESSAGE value="add send email, get and add methods" />
     <MESSAGE value="improve crud and implement pug" />
     <MESSAGE value="work on html" />
-    <option name="LAST_COMMIT_MESSAGE" value="work on html" />
+    <MESSAGE value="form table in html and send to email" />
+    <option name="LAST_COMMIT_MESSAGE" value="form table in html and send to email" />
   </component>
 </project>
