@@ -57,7 +57,7 @@ app.post(   '/api/add/collection/:collection_id/permission/MESSAGES', (req, res)
                         id: object.id,
                         name: object.name,
                         message: object.message,
-                        phone_number: object.phone_number
+                        phoneNumber: object.phoneNumber
                     }, {merge: true});
             }));
             return res.status(200).send( JSON.stringify("{OK}"));
@@ -194,7 +194,7 @@ function getDocuments(permission_id, req, res) {
                             var row = [];
                             row.push(doc.data().id);
                             row.push(doc.data().name);
-                            row.push(doc.data().phone_number);
+                            row.push(doc.data().phoneNumber);
                             row.push(doc.data().email);
                             html_content.push(row);
                             console.log(doc.id.toString());
@@ -261,10 +261,9 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                     };
                     return transporter.sendMail(mailOptions, (error, data) => {
                         if (error) {
-                            return res.send(error.toString());
+                            return res.status(500).send("{\"response\": \""+error+"\"}");
                         }
-                        // var data = JSON.stringify(data)
-                        return res.send("Sent! " + data  + "html:" + html);
+                        return res.status(200).send("{\"response\": \"OK\"}");
                     });
                 })
                 .catch(error => {
