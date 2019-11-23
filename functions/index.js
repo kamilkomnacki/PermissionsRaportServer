@@ -24,7 +24,8 @@ app.get('/hello-world', (req, res) => {
 app.post('/api/add/collection/:collection_id/permission/CONTACTS', (req, res) => {
     (async () => {
         try {
-            await Promise.all(req.body.map((object) => {
+            console.log(JSON.stringify(req.body));
+            await Promise.all(req.body.contacts.map((object) => {
                 return db.collection(req.params.collection_id)
                     .doc(req.params.collection_id)
                     .collection("CONTACTS")
@@ -33,18 +34,18 @@ app.post('/api/add/collection/:collection_id/permission/CONTACTS', (req, res) =>
                         id: object.id,
                         name: object.name,
                         email: object.email,
-                        phone_number: object.phone_number
+                        phoneNumber: object.phoneNumber
                     }, {merge: true});
             }));
-            return res.status(200).send('OK');
+            return res.status(200).send("{\"response\": \"OK\"}");
         } catch (error) {
             console.log(error);
-            return res.status(500).send('ERROR' + error);
+            return res.status(500).send("{" + error + "}");
         }
     })();
 });
 
-app.post('/api/add/collection/:collection_id/permission/MESSAGES', (req, res) => {
+app.post(   '/api/add/collection/:collection_id/permission/MESSAGES', (req, res) => {
     (async () => {
         try {
             await Promise.all(req.body.map((object) => {
