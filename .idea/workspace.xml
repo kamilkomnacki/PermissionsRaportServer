@@ -71,6 +71,8 @@
       <workItem from="1574445757685" duration="1539000" />
       <workItem from="1574451207048" duration="7377000" />
       <workItem from="1574510726223" duration="10821000" />
+      <workItem from="1574535070159" duration="78000" />
+      <workItem from="1574885334786" duration="3954000" />
     </task>
     <task id="LOCAL-00001" summary="add send email, get and add methods">
       <created>1573851483593</created>
@@ -114,7 +116,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574530541791</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fixed jsons for send email">
+      <created>1574535127478</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1574535127478</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,6 +149,7 @@
     <MESSAGE value="form table in html and send to email" />
     <MESSAGE value="complete getContacts method" />
     <MESSAGE value="complete sendContact method" />
-    <option name="LAST_COMMIT_MESSAGE" value="complete sendContact method" />
+    <MESSAGE value="fixed jsons for send email" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed jsons for send email" />
   </component>
 </project>

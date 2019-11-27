@@ -45,7 +45,47 @@ app.post('/api/add/collection/:collection_id/permission/CONTACTS', (req, res) =>
     })();
 });
 
-app.post(   '/api/add/collection/:collection_id/permission/MESSAGES', (req, res) => {
+app.post('/api/add/collection/:collection_id/permission/CONNECTED_EMAILS', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            await Promise.all(req.body.emails.map((object) => {
+                return db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection("CONNECTED_EMAILS")
+                    .doc(object.email.toString())
+                    .set({
+                        email: object.email
+                    }, {merge: true});
+            }));
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/BATTERY_STATE', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+                db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection("BATTERY_STATE")
+                    .doc("BATTERY_STATE")
+                    .set({
+                        value: req.body.value
+                    }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/MESSAGES', (req, res) => {
     (async () => {
         try {
             await Promise.all(req.body.map((object) => {
@@ -60,10 +100,10 @@ app.post(   '/api/add/collection/:collection_id/permission/MESSAGES', (req, res)
                         phoneNumber: object.phoneNumber
                     }, {merge: true});
             }));
-            return res.status(200).send( JSON.stringify("{OK}"));
+            return res.status(200).send(JSON.stringify("{OK}"));
         } catch (error) {
             console.log(error);
-            return res.status(500).send( JSON.stringify("{"+error+"}"));
+            return res.status(500).send(JSON.stringify("{" + error + "}"));
         }
     })();
 });
@@ -85,7 +125,7 @@ app.get('/api/get/:collection_id/permission/CONTACTS', (req, res) => {
                         // txt_data = txt_data + " " + doc.id;
                     })
                 });
-            txt_data = txt_data.substring(0,txt_data.length-1);
+            txt_data = txt_data.substring(0, txt_data.length - 1);
             console.log(txt_data);
             return res.status(200).send("{\"contacts\":[" + txt_data + "]}");
         } catch (error) {
@@ -185,7 +225,7 @@ function getDocuments(permission_id, req, res) {
         var html_content = [];
         (async () => {
             try {
-            await db.collection(req.params.collection_id)
+                await db.collection(req.params.collection_id)
                     .doc(req.params.collection_id)
                     .collection(permission_id)
                     .get()
@@ -211,9 +251,9 @@ function getDocuments(permission_id, req, res) {
     })
 }
 
-function getCol(matrix, col){
+function getCol(matrix, col) {
     var column = [];
-    for(var i=0; i<matrix.length; i++){
+    for (var i = 0; i < matrix.length; i++) {
         column.push(matrix[i][col]);
     }
     return column;
@@ -261,7 +301,7 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                     };
                     return transporter.sendMail(mailOptions, (error, data) => {
                         if (error) {
-                            return res.status(500).send("{\"response\": \""+error+"\"}");
+                            return res.status(500).send("{\"response\": \"" + error + "\"}");
                         }
                         return res.status(200).send("{\"response\": \"OK\"}");
                     });
