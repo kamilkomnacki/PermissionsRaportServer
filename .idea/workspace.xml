@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3203a32e-6a07-4a3c-b312-35402af9fcea" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/functions/PugContents/connected_emails.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/PugContents/contacts.pug" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/contacts.pug" beforeDir="false" afterPath="$PROJECT_DIR$/functions/PugContents/battery_state.pug" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,11 +31,20 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/functions/PugContents" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="watcher.settings" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/functions/PugContents" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/functions/PugContents" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -72,7 +84,8 @@
       <workItem from="1574451207048" duration="7377000" />
       <workItem from="1574510726223" duration="10821000" />
       <workItem from="1574535070159" duration="78000" />
-      <workItem from="1574885334786" duration="3954000" />
+      <workItem from="1574885334786" duration="3994000" />
+      <workItem from="1574963357248" duration="4857000" />
     </task>
     <task id="LOCAL-00001" summary="add send email, get and add methods">
       <created>1573851483593</created>
@@ -123,7 +136,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574535127478</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="add functions for user connected_emails and battery_state">
+      <created>1574889816978</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1574889816978</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -150,6 +170,7 @@
     <MESSAGE value="complete getContacts method" />
     <MESSAGE value="complete sendContact method" />
     <MESSAGE value="fixed jsons for send email" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed jsons for send email" />
+    <MESSAGE value="add functions for user connected_emails and battery_state" />
+    <option name="LAST_COMMIT_MESSAGE" value="add functions for user connected_emails and battery_state" />
   </component>
 </project>

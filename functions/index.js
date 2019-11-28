@@ -189,38 +189,7 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-
-/*
-        "<!DOCTYPE html>
-            <html>
-	            <head>
-		            <meta charset='UTF-8'>
-			        <title>JSON To HTML using codebeautify.org</title>
-		        </head>
-		        <body>
-			        <table border=1>
-				        <thead>
-					        <tr>
-						        <th>id</th>
-						        <th>name</th>
-						        <th>email</th>
-						        <th>phone_number</th>
-					        </tr>
-				        </thead>
-                        <tbody>
-                            <tr>
-                                <td>45</td>
-    						    <td>Stack</td>
-    						    <td>stack@overflow.com</td>
-    						    <td>+48 111 222 333</td>
-    					    </tr>
-                        </tbody>
-			        </table>
-		        </body>
-	        </html>"
-
- */
-function getDocuments(permission_id, req, res) {
+function getDocumentForContacts(permission_id, req, res) {
     return new Promise((resolve, reject) => {
         var html_content = [];
         (async () => {
@@ -251,6 +220,63 @@ function getDocuments(permission_id, req, res) {
     })
 }
 
+function getDocumentForConnectedEmails(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.id.toString());
+                            html_content.push(row);
+                            console.log(doc.id.toString());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForConnectedEmails: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForConnectedEmails: " + e);
+            }
+        })();
+    })
+}
+
+function getDocumentForBatteryState(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().value.toString());
+                            row.push("Tak");
+                            html_content.push(row);
+                            console.log(doc.data().value.toString());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForBatteryState: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForBatteryState: " + e);
+            }
+        })();
+    })
+}
+
 function getCol(matrix, col) {
     var column = [];
     for (var i = 0; i < matrix.length; i++) {
@@ -259,12 +285,15 @@ function getCol(matrix, col) {
     return column;
 }
 
-let PERMISSION_IDS = ["CONTACTS", "MESSAGES", "STORAGE"];
+let PERMISSION_IDS = ["CONNECTED_EMAILS", "BATTERY_STATE", "CONTACTS", "MESSAGES", "STORAGE"];
 
 app.get('/api/send_email/user/:collection_id', (req, res) => {
     const mainPUGFunction = pug.compileFile("./main.pug");
     const permissionHeaderPUGFunction = pug.compileFile("./permission_header.pug");
-    const contentPUGFunction = pug.compileFile("./contacts.pug");
+    const connectedEmailsPUG = pug.compileFile("./PugContents/connected_emails.pug");
+    const batteryStatePUG = pug.compileFile("./PugContents/battery_state.pug");
+    const contactsPUG = pug.compileFile("./PugContents/contacts.pug");
+
     var html_page = "";
     var html_page_contents = "";
 
@@ -272,19 +301,38 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
     (async () => {
         try {
             await Promise.all([
-                getDocuments(PERMISSION_IDS[0], req, res),
-                getDocuments(PERMISSION_IDS[1], req, res),
-                getDocuments(PERMISSION_IDS[2], req, res)])
+                getDocumentForConnectedEmails(PERMISSION_IDS[0], req, res),
+                getDocumentForBatteryState(PERMISSION_IDS[1], req, res),
+                getDocumentForContacts(PERMISSION_IDS[2], req, res)])
                 .then(answer => {
                     var html = mainPUGFunction();
-                    html += permissionHeaderPUGFunction({permission_name: "Kontakty"});
+
+                    //CONNECTED_EMAILS:
+                    html += permissionHeaderPUGFunction({permission_name: "Podłączone konta email"});
                     console.log("ANSWER0: " + answer[0]);
-                    html += contentPUGFunction({
+                    html += connectedEmailsPUG({
+                        headers: ["Nazwa"],
+                        ids: getCol(answer[0], 0)
+                    });
+
+                    //BATTERY_STATE:
+                    html += permissionHeaderPUGFunction({permission_name: "Stan baterii"});
+                    console.log("ANSWER1: " + answer[1]);
+                    html += batteryStatePUG({
+                        headers: ["Naładowanie", "Podłączony do ładowania"],
+                        charge: getCol(answer[1], 0),
+                        isCharge: getCol(answer[1], 1)
+                    });
+
+                    //CONTACTS:
+                    html += permissionHeaderPUGFunction({permission_name: "Kontakty"});
+                    console.log("ANSWER2: " + answer[2]);
+                    html += contactsPUG({
                         headers: ["ID", "Nazwa", "Numer telefonu", "Email"],
-                        ids: getCol(answer[0], 0),
-                        names: getCol(answer[0], 1),
-                        phone_numbers: getCol(answer[0], 2),
-                        emails: getCol(answer[0], 3)
+                        ids: getCol(answer[2], 0),
+                        names: getCol(answer[2], 1),
+                        phone_numbers: getCol(answer[2], 2),
+                        emails: getCol(answer[2], 3)
                     });
 
                     // html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
