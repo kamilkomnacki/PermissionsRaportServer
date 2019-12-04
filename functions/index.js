@@ -75,7 +75,12 @@ app.post('/api/add/collection/:collection_id/permission/BATTERY_STATE', (req, re
                     .collection("BATTERY_STATE")
                     .doc("BATTERY_STATE")
                     .set({
-                        value: req.body.value
+                        value: req.body.value,
+                        isCharge: req.body.isCharge,
+                        batteryTechnology: req.body.batteryTechnology,
+                        temperature: req.body.temperature,
+                        voltage: req.body.voltage,
+                        hasBattery: req.body.hasBattery
                     }, {merge: true});
             return res.status(200).send("{\"response\": \"OK\"}");
         } catch (error) {
@@ -108,7 +113,267 @@ app.post('/api/add/collection/:collection_id/permission/MESSAGES', (req, res) =>
     })();
 });
 
+app.post('/api/add/collection/:collection_id/permission/BLUETOOTH', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("BLUETOOTH")
+                .doc("BLUETOOTH")
+                .set({
+                    macAddress: req.body.macAddress
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/CONFIG', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("CONFIG")
+                .doc("CONFIG")
+                .set({
+                    ringerMode: req.body.ringerMode
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/DEVICE', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("DEVICE")
+                .doc("DEVICE")
+                .set({
+                    IMEI: req.body.IMEI,
+                    SDK: req.body.SDK,
+                    manufacturer: req.body.manufacturer,
+                    osVersion: req.body.osVersion,
+                    phoneNumber: req.body.phoneNumber,
+                    product: req.body.product,
+                    device: req.body.device,
+                    fingerprint: req.body.fingerprint,
+                    isRooted: req.body.isRooted,
+                    deviceType: req.body.deviceType,
+                    phoneType: req.body.phoneType,
+                    orientationType: req.body.orientationType
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/LOCATION', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("LOCATION")
+                .doc("LOCATION")
+                .set({
+                    lat: req.body.lat,
+                    lon: req.body.lon
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/MEMORY', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("MEMORY")
+                .doc("MEMORY")
+                .set({
+                    totalRAM: req.body.totalRAM,
+                    availableInternal: req.body.availableInternal,
+                    availableExternal: req.body.availableExternal,
+                    totalInternal: req.body.totalInternal,
+                    totalExternal: req.body.totalExternal
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/NETWORK', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("NETWORK")
+                .doc("NETWORK")
+                .set({
+                    isNetworkAvailable: req.body.isNetworkAvailable,
+                    isWifiEnabled: req.body.isWifiEnabled,
+                    ipv4Address: req.body.ipv4Address,
+                    ipv6Address: req.body.ipv6Address,
+                    wifiSSID: req.body.wifiSSID,
+                    wifiLinkSpeed: req.body.wifiLinkSpeed,
+                    wifiBSSID: req.body.wifiBSSID,
+                    wifiMAC: req.body.wifiMAC,
+                    networkType: req.body.networkType
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/NFC', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("NFC")
+                .doc("NFC")
+                .set({
+                    isNFCPresent: req.body.isNFCPresent,
+                    isNFCEnable: req.body.isNFCEnable
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/SIM', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("SIM")
+                .doc("SIM")
+                .set({
+                    simSerialNumber: req.body.simSerialNumber,
+                    country: req.body.country,
+                    carrier: req.body.carrier,
+                    isSimNetworkLocked: req.body.isSimNetworkLocked,
+                    isMultiSim: req.body.isMultiSim,
+                    numberOfActiveSim: req.body.numberOfActiveSim
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/ID', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("ID")
+                .doc("ID")
+                .set({
+                    IMEI: req.body.IMEI,
+                    SDK: req.body.SDK,
+                    manufacturer: req.body.manufacturer,
+                    osVersion: req.body.osVersion,
+                    phoneNumber: req.body.phoneNumber,
+                    product: req.body.product,
+                    device: req.body.device,
+                    fingerprint: req.body.fingerprint,
+                    isRooted: req.body.isRooted,
+                    deviceType: req.body.deviceType,
+                    phoneType: req.body.phoneType,
+                    orientationType: req.body.orientationType
+                }, {merge: true});
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
 //get
+app.get('/api/get/:collection_id/permission/CONFIG', (req, res) => {
+    (async () => {
+        try {
+            var txt_data = "";
+            await db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("CONFIG")
+                .doc("CONFIG")
+                .get()
+                .then(snap => {
+                        console.log(snap.data());
+                        txt_data = txt_data + JSON.stringify(snap.data()) + ",";
+                        // txt_data = txt_data + " " + doc.id;
+                });
+            txt_data = txt_data.substring(0, txt_data.length - 1);
+            console.log(txt_data);
+            return res.status(200).send("{\"config\":[" + txt_data + "]}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send('ERROR' + error);
+        }
+    })()
+});
+
+app.get('/api/get/:collection_id/permission/DEVICE', (req, res) => {
+    (async () => {
+        try {
+            var txt_data = "";
+            await db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("DEVICE")
+                .doc("DEVICE")
+                .get()
+                .then(snap => {
+                        console.log(snap.data());
+                        txt_data = txt_data + JSON.stringify(snap.data()) + ",";
+                        // txt_data = txt_data + " " + doc.id;
+                });
+            txt_data = txt_data.substring(0, txt_data.length - 1);
+            console.log(txt_data);
+            return res.status(200).send("{\"config\":[" + txt_data + "]}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send('ERROR' + error);
+        }
+    })()
+});
+
 app.get('/api/get/:collection_id/permission/CONTACTS', (req, res) => {
     (async () => {
         try {
@@ -277,6 +542,34 @@ function getDocumentForBatteryState(permission_id, req, res) {
     })
 }
 
+function getDocumentForBluetooth(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().macAddress.toString());
+                            html_content.push(row);
+                            console.log(doc.data().value.toString());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForBluetooth: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForBatteryState: " + e);
+            }
+        })();
+    })
+}
+
 function getCol(matrix, col) {
     var column = [];
     for (var i = 0; i < matrix.length; i++) {
@@ -285,13 +578,14 @@ function getCol(matrix, col) {
     return column;
 }
 
-let PERMISSION_IDS = ["CONNECTED_EMAILS", "BATTERY_STATE", "CONTACTS", "MESSAGES", "STORAGE"];
+let PERMISSION_IDS = ["CONNECTED_EMAILS", "BATTERY_STATE", "BLUETOOTH", "CONTACTS", "MESSAGES", "STORAGE"];
 
 app.get('/api/send_email/user/:collection_id', (req, res) => {
     const mainPUGFunction = pug.compileFile("./main.pug");
     const permissionHeaderPUGFunction = pug.compileFile("./permission_header.pug");
     const connectedEmailsPUG = pug.compileFile("./PugContents/connected_emails.pug");
     const batteryStatePUG = pug.compileFile("./PugContents/battery_state.pug");
+    const bluetoothPUG = pug.compileFile("./PugContents/bluetooth.pug");
     const contactsPUG = pug.compileFile("./PugContents/contacts.pug");
 
     var html_page = "";
@@ -303,6 +597,7 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
             await Promise.all([
                 getDocumentForConnectedEmails(PERMISSION_IDS[0], req, res),
                 getDocumentForBatteryState(PERMISSION_IDS[1], req, res),
+                getDocumentForBluetooth(PERMISSION_IDS[2], req, res),
                 getDocumentForContacts(PERMISSION_IDS[2], req, res)])
                 .then(answer => {
                     var html = mainPUGFunction();
@@ -322,6 +617,14 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                         headers: ["Naładowanie", "Podłączony do ładowania"],
                         charge: getCol(answer[1], 0),
                         isCharge: getCol(answer[1], 1)
+                    });
+
+                    //BLUETOOTH:
+                    html += permissionHeaderPUGFunction({permission_name: "Bluetooth"});
+                    console.log("ANSWER2: " + answer[2]);
+                    html += batteryStatePUG({
+                        headers: ["MAC Adres"],
+                        macAddress: getCol(answer[2], 0)
                     });
 
                     //CONTACTS:
