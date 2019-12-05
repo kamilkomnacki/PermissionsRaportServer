@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3203a32e-6a07-4a3c-b312-35402af9fcea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/functions/PugContents/bluetooth.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/PugContents/device.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/PugContents/location.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/PugContents/memory.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/PugContents/network.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/PugContents/nfc.pug" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/PugContents/sim.pug" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/PugContents/battery_state.pug" beforeDir="false" afterPath="$PROJECT_DIR$/functions/PugContents/battery_state.pug" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/PugContents/bluetooth.pug" beforeDir="false" afterPath="$PROJECT_DIR$/functions/PugContents/bluetooth.pug" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -44,10 +51,10 @@
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/functions/PugContents" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
+    <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/functions/PugContents" />
     </key>
   </component>
@@ -91,7 +98,8 @@
       <workItem from="1574535070159" duration="78000" />
       <workItem from="1574885334786" duration="3994000" />
       <workItem from="1574963357248" duration="4895000" />
-      <workItem from="1575487875262" duration="6439000" />
+      <workItem from="1575487875262" duration="6595000" />
+      <workItem from="1575572567396" duration="9214000" />
     </task>
     <task id="LOCAL-00001" summary="add send email, get and add methods">
       <created>1573851483593</created>
@@ -156,7 +164,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574973019999</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="add post metods for battery, bluetooth, config, device, id, location, memory, nfc, network and sim">
+      <created>1575496981851</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1575496981851</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -185,6 +200,7 @@
     <MESSAGE value="fixed jsons for send email" />
     <MESSAGE value="add functions for user connected_emails and battery_state" />
     <MESSAGE value="send email with battery and connected address" />
-    <option name="LAST_COMMIT_MESSAGE" value="send email with battery and connected address" />
+    <MESSAGE value="add post metods for battery, bluetooth, config, device, id, location, memory, nfc, network and sim" />
+    <option name="LAST_COMMIT_MESSAGE" value="add post metods for battery, bluetooth, config, device, id, location, memory, nfc, network and sim" />
   </component>
 </project>

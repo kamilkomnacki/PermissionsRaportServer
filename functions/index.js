@@ -164,6 +164,7 @@ app.post('/api/add/collection/:collection_id/permission/DEVICE', (req, res) => {
                     SDK: req.body.SDK,
                     manufacturer: req.body.manufacturer,
                     osVersion: req.body.osVersion,
+                    model: req.body.model,
                     phoneNumber: req.body.phoneNumber,
                     product: req.body.product,
                     device: req.body.device,
@@ -400,7 +401,6 @@ app.get('/api/get/:collection_id/permission/CONTACTS', (req, res) => {
     })()
 });
 
-
 app.get('/api/get/:collection_id/permission/MESSAGES', (req, res) => {
     (async () => {
         try {
@@ -526,9 +526,13 @@ function getDocumentForBatteryState(permission_id, req, res) {
                         snap_col1.forEach(doc => {
                             var row = [];
                             row.push(doc.data().value.toString());
-                            row.push("Tak");
+                            row.push(doc.data().isCharge.toString());
+                            row.push(doc.data().batteryTechnology);
+                            row.push(doc.data().temperature.toString());
+                            row.push(doc.data().voltage.toString());
+                            row.push(doc.data().hasBattery.toString());
                             html_content.push(row);
-                            console.log(doc.data().value.toString());
+                            console.log("BATTERY STATE: " + html_content);
                         });
                         resolve(html_content);
                     })
@@ -554,9 +558,9 @@ function getDocumentForBluetooth(permission_id, req, res) {
                     .then(snap_col1 => {
                         snap_col1.forEach(doc => {
                             var row = [];
-                            row.push(doc.data().macAddress.toString());
+                            row.push(doc.data().macAddress);
                             html_content.push(row);
-                            console.log(doc.data().value.toString());
+                            console.log("BLUETOOTH: " + doc.data().macAddress);
                         });
                         resolve(html_content);
                     })
@@ -570,6 +574,233 @@ function getDocumentForBluetooth(permission_id, req, res) {
     })
 }
 
+function getDocumentForConfig(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().ringerMode);
+                            html_content.push(row);
+                            console.log("CONFIG: " + doc.data().ringerMode);
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForBluetooth: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForBatteryState: " + e);
+            }
+        })();
+    })
+}
+
+function getDocumentForDevice(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().IMEI);
+                            row.push(doc.data().SDK.toString());
+                            row.push(doc.data().manufacturer);
+                            row.push(doc.data().model);
+                            row.push(doc.data().osVersion);
+                            row.push(doc.data().phoneNumber);
+                            row.push(doc.data().product);
+                            row.push(doc.data().device);
+                            row.push(doc.data().fingerprint);
+                            row.push(doc.data().isRooted);
+                            row.push(doc.data().deviceType);
+                            row.push(doc.data().phoneType);
+                            row.push(doc.data().orientationType);
+                            html_content.push(row);
+                            console.log("DEVICE: " + doc.data().ringerMode);
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForDevice: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForDevice: " + e);
+            }
+        })();
+    })
+}
+
+function getDocumentForLocation(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().email);
+                            html_content.push(row);
+                            console.log("Location latitude: " + doc.data().lat);
+                            console.log("Location longitude: " + doc.data().lon);
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForLocation: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForLocation: " + e);
+            }
+        })();
+    })
+}
+
+function getDocumentForMemory(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().totalRAM);
+                            row.push(doc.data().availableInternal);
+                            row.push(doc.data().availableExternal);
+                            row.push(doc.data().totalInternal);
+                            row.push(doc.data().totalExternal);
+                            html_content.push(row);
+                            console.log("Memory: " + doc.data());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForLocation: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForLocation: " + e);
+            }
+        })();
+    })
+}
+
+function getDocumentForNetwork(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().isNetworkAvailable);
+                            row.push(doc.data().isWifiEnabled);
+                            row.push(doc.data().ipv4Address);
+                            row.push(doc.data().ipv6Address);
+                            row.push(doc.data().wifiSSID);
+                            row.push(doc.data().wifiLinkSpeed);
+                            row.push(doc.data().wifiBSSID);
+                            row.push(doc.data().wifiMAC);
+                            row.push(doc.data().networkType);
+                            html_content.push(row);
+                            console.log("Memory: " + doc.data());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForNetwork: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForNetwork: " + e);
+            }
+        })();
+    })
+}
+
+function getDocumentForNFC(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().isNFCPresent);
+                            row.push(doc.data().isNFCEnable);
+                            html_content.push(row);
+                            console.log("NFC: " + doc.data());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForNFC: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForNFC: " + e);
+            }
+        })();
+    })
+}
+
+function getDocumentForSIM(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().simSerialNumber);
+                            row.push(doc.data().country);
+                            row.push(doc.data().carrier);
+                            row.push(doc.data().isSimNetworkLocked);
+                            row.push(doc.data().isMultiSim);
+                            row.push(doc.data().numberOfActiveSim);
+                            html_content.push(row);
+                            console.log("NFC: " + doc.data());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error getDocumentForSIM: " + error);
+                    })
+            } catch (e) {
+                reject("Error getDocumentForSIM: " + e);
+            }
+        })();
+    })
+}
+
 function getCol(matrix, col) {
     var column = [];
     for (var i = 0; i < matrix.length; i++) {
@@ -578,7 +809,20 @@ function getCol(matrix, col) {
     return column;
 }
 
-let PERMISSION_IDS = ["CONNECTED_EMAILS", "BATTERY_STATE", "BLUETOOTH", "CONTACTS", "MESSAGES", "STORAGE"];
+let PERMISSION_IDS = [
+    "CONNECTED_EMAILS",
+    "BATTERY_STATE",
+    "BLUETOOTH",
+    "CONFIG",
+    "DEVICE",
+    "LOCATION",
+    "MEMORY",
+    "NETWORK",
+    "NFC",
+    "SIM",
+    "CONTACTS",
+    "MESSAGES",
+    "STORAGE"];
 
 app.get('/api/send_email/user/:collection_id', (req, res) => {
     const mainPUGFunction = pug.compileFile("./main.pug");
@@ -586,6 +830,12 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
     const connectedEmailsPUG = pug.compileFile("./PugContents/connected_emails.pug");
     const batteryStatePUG = pug.compileFile("./PugContents/battery_state.pug");
     const bluetoothPUG = pug.compileFile("./PugContents/bluetooth.pug");
+    const devicePUG = pug.compileFile("./PugContents/device.pug");
+    const locationPUG = pug.compileFile("./PugContents/location.pug");
+    const memoryPUG = pug.compileFile("./PugContents/memory.pug");
+    const networkPUG = pug.compileFile("./PugContents/network.pug");
+    const nfcPUG = pug.compileFile("./PugContents/nfc.pug");
+    const simPUG = pug.compileFile("./PugContents/sim.pug");
     const contactsPUG = pug.compileFile("./PugContents/contacts.pug");
 
     var html_page = "";
@@ -598,6 +848,13 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                 getDocumentForConnectedEmails(PERMISSION_IDS[0], req, res),
                 getDocumentForBatteryState(PERMISSION_IDS[1], req, res),
                 getDocumentForBluetooth(PERMISSION_IDS[2], req, res),
+                getDocumentForConfig(PERMISSION_IDS[3], req, res),
+                getDocumentForDevice(PERMISSION_IDS[4], req, res),
+                getDocumentForLocation(PERMISSION_IDS[5], req, res),
+                getDocumentForMemory(PERMISSION_IDS[6], req, res),
+                getDocumentForNetwork(PERMISSION_IDS[7], req, res),
+                getDocumentForNFC(PERMISSION_IDS[8], req, res),
+                getDocumentForSIM(PERMISSION_IDS[9], req, res),
                 getDocumentForContacts(PERMISSION_IDS[2], req, res)])
                 .then(answer => {
                     var html = mainPUGFunction();
@@ -614,17 +871,104 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                     html += permissionHeaderPUGFunction({permission_name: "Stan baterii"});
                     console.log("ANSWER1: " + answer[1]);
                     html += batteryStatePUG({
-                        headers: ["Naładowanie", "Podłączony do ładowania"],
+                        headers: ["Naładowanie", "Podłączony do ładowania", "Rodzaj baterii", "Temperatura", "Napięcie [mV]", "Czy bateria obecna?"],
                         charge: getCol(answer[1], 0),
-                        isCharge: getCol(answer[1], 1)
+                        isCharge: getCol(answer[1], 1),
+                        batteryTechnology: getCol(answer[1], 2),
+                        temperature: getCol(answer[1], 3),
+                        voltage: getCol(answer[1], 4),
+                        hasBattery: getCol(answer[1], 5)
                     });
 
                     //BLUETOOTH:
                     html += permissionHeaderPUGFunction({permission_name: "Bluetooth"});
                     console.log("ANSWER2: " + answer[2]);
-                    html += batteryStatePUG({
+                    html += bluetoothPUG({
                         headers: ["MAC Adres"],
                         macAddress: getCol(answer[2], 0)
+                    });
+
+                    //DEVICE CONFIG:
+                    html += permissionHeaderPUGFunction({permission_name: "Konfiguracja urządzenia"});
+                    console.log("ANSWER3: " + answer[3]);
+                    console.log("ANSWER4: " + answer[4]);
+                    html += devicePUG({
+                        headers: ["IMEI", "Wersja SDK", "Producent telefonu", "Model telefonu", "Wersja systemu", "Numer telefonu","Produkt", "Urządzenie", "Odcisk palca", "Czy urządzenie jest zrootowane?", "Typ urządzenia", "Typ telefonu", "Orientacja", "Tryb dzwonienia"],
+                        IMEI: getCol(answer[4], 0),
+                        SDK: getCol(answer[4], 1),
+                        manufacturer: getCol(answer[4], 2),
+                        model: getCol(answer[4], 3),
+                        osVersion: getCol(answer[4], 4),
+                        phondeNumber: getCol(answer[4], 5),
+                        product: getCol(answer[4], 6),
+                        device: getCol(answer[4], 7),
+                        fingerprint: getCol(answer[4], 8),
+                        isRooted: getCol(answer[4], 9),
+                        deviceType: getCol(answer[4], 10),
+                        phoneType: getCol(answer[4], 11),
+                        orientationType: getCol(answer[4], 12),
+                        ringerMode: getCol(answer[3], 0)
+                    });
+
+                    //DEVICE CONFIG:
+                    html += permissionHeaderPUGFunction({permission_name: "Localizacja"});
+                    console.log("ANSWER5: " + answer[5]);
+                    html += locationPUG({
+                        headers: ["Szerokość geograficzna", "Dlugosc geograficzna"],
+                        lat: getCol(answer[5], 0),
+                        lon: getCol(answer[5], 1),
+
+                    });
+
+                    //MEMORY:
+                    html += permissionHeaderPUGFunction({permission_name: "Pamięć"});
+                    console.log("ANSWER6: " + answer[6]);
+                    html += memoryPUG({
+                        headers: ["Pamięć RAM", "Dostępna pamięć wewnętrzna", "Dostępna pamięć zewnętrzna", "Całkowita pamięć wewnętrzna", "Całkowita pamięć zewnętrzna"],
+                        totalRAM: getCol(answer[6], 0),
+                        availableInternal: getCol(answer[6], 1),
+                        availableExternal: getCol(answer[6], 2),
+                        totalInternal: getCol(answer[6], 3),
+                        totalExternal: getCol(answer[6], 4),
+
+                    });
+
+                    //NETWORK:
+                    html += permissionHeaderPUGFunction({permission_name: "Sieć"});
+                    console.log("ANSWER7: " + answer[7]);
+                    html += networkPUG({
+                        headers: ["Czy sieć dostępna?", "Czy WiFi dostępne?", "Adres IPv4", "Adres IPv6", "WiFi SSID", "WiFi Link Speed", "WiFi BSSID", "WiFi MAC Adres", "Typ sieci"],
+                        isNetworkAvailable: getCol(answer[7], 0),
+                        isWifiEnabled: getCol(answer[7], 1),
+                        ipv4Address: getCol(answer[7], 2),
+                        ipv6Address: getCol(answer[7], 3),
+                        wifiSSID: getCol(answer[7], 4),
+                        wifiLinkSpeed: getCol(answer[7], 5),
+                        wifiBSSID: getCol(answer[7], 6),
+                        wifiMAC: getCol(answer[7], 7),
+                        networkType: getCol(answer[7], 8)
+                    });
+
+                    //NFC:
+                    html += permissionHeaderPUGFunction({permission_name: "NFC"});
+                    console.log("ANSWER8: " + answer[8]);
+                    html += nfcPUG({
+                        headers: ["Czy NFC jest obecne na urządzeniu?", "Czy NFC włączone?"],
+                        isNFCPresent: getCol(answer[8], 0),
+                        isNFCEnable: getCol(answer[8], 1)
+                    });
+
+                    //SIM:
+                    html += permissionHeaderPUGFunction({permission_name: "SIM"});
+                    console.log("ANSWER9: " + answer[9]);
+                    html += simPUG({
+                        headers: ["Numer seryjny SIM?", "Kraj", "?Carrier?", "Czy sieć w SIM dostępna?", "Czy wiele SIM?", "Ilość włączonych SIM"],
+                        simSerialNumber: getCol(answer[9], 0),
+                        country: getCol(answer[9], 1),
+                        carrier: getCol(answer[9], 2),
+                        isSimNetworkLocked: getCol(answer[9], 3),
+                        isMultiSim: getCol(answer[9], 4),
+                        numberOfActiveSim: getCol(answer[9], 5)
                     });
 
                     //CONTACTS:
@@ -637,6 +981,8 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                         phone_numbers: getCol(answer[2], 2),
                         emails: getCol(answer[2], 3)
                     });
+
+
 
                     // html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
                     // html += contentPUGFunction();

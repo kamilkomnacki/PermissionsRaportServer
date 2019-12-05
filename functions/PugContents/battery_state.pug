@@ -1,7 +1,19 @@
 table(style='width:100%', border='2')
         tr
             td= headers[0]
-            td= charge + '%'
+            td= charge + ' %'
         tr
             td= headers[1]
             td= isCharge
+        tr
+            td= headers[2]
+            td= batteryTechnology
+        tr
+            td= headers[3]
+            td= temperature + " °C"
+        tr
+            td= headers[4]
+            td= voltage + " mV"
+        tr
+            td= headers[5]
+            td= hasBattery
