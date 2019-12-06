@@ -2,9 +2,11 @@ table(style='width:100%', border='2')
     tr
             each val in headers
                 td= val
-    each val, index in ids
+    each val, index in displayName
         tr
             td= val
-            td= names[index]
-            td= phone_numbers[index]
-            td= emails[index]
+            td= firstName[index]
+            td= lastName[index]
+            td= normalizedNumber[index]
+            td= address[index]
+            td= email[index]

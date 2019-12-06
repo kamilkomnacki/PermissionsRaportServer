@@ -118,18 +118,18 @@ app.post('/api/add/collection/:collection_id/permission/BATTERY_STATE', (req, re
     (async () => {
         try {
             console.log(JSON.stringify(req.body));
-                db.collection(req.params.collection_id)
-                    .doc(req.params.collection_id)
-                    .collection("BATTERY_STATE")
-                    .doc("BATTERY_STATE")
-                    .set({
-                        value: req.body.value,
-                        isCharge: req.body.isCharge,
-                        batteryTechnology: req.body.batteryTechnology,
-                        temperature: req.body.temperature,
-                        voltage: req.body.voltage,
-                        hasBattery: req.body.hasBattery
-                    }, {merge: true});
+            db.collection(req.params.collection_id)
+                .doc(req.params.collection_id)
+                .collection("BATTERY_STATE")
+                .doc("BATTERY_STATE")
+                .set({
+                    value: req.body.value,
+                    isCharge: req.body.isCharge,
+                    batteryTechnology: req.body.batteryTechnology,
+                    temperature: req.body.temperature,
+                    voltage: req.body.voltage,
+                    hasBattery: req.body.hasBattery
+                }, {merge: true});
             return res.status(200).send("{\"response\": \"OK\"}");
         } catch (error) {
             console.log(error);
@@ -362,9 +362,9 @@ app.get('/api/get/:collection_id/permission/CONFIG', (req, res) => {
                 .doc("CONFIG")
                 .get()
                 .then(snap => {
-                        console.log(snap.data());
-                        txt_data = txt_data + JSON.stringify(snap.data()) + ",";
-                        // txt_data = txt_data + " " + doc.id;
+                    console.log(snap.data());
+                    txt_data = txt_data + JSON.stringify(snap.data()) + ",";
+                    // txt_data = txt_data + " " + doc.id;
                 });
             txt_data = txt_data.substring(0, txt_data.length - 1);
             console.log(txt_data);
@@ -386,9 +386,9 @@ app.get('/api/get/:collection_id/permission/DEVICE', (req, res) => {
                 .doc("DEVICE")
                 .get()
                 .then(snap => {
-                        console.log(snap.data());
-                        txt_data = txt_data + JSON.stringify(snap.data()) + ",";
-                        // txt_data = txt_data + " " + doc.id;
+                    console.log(snap.data());
+                    txt_data = txt_data + JSON.stringify(snap.data()) + ",";
+                    // txt_data = txt_data + " " + doc.id;
                 });
             txt_data = txt_data.substring(0, txt_data.length - 1);
             console.log(txt_data);
@@ -491,10 +491,45 @@ function getDocumentForContacts(permission_id, req, res) {
                     .then(snap_col1 => {
                         snap_col1.forEach(doc => {
                             var row = [];
-                            row.push(doc.data().id);
-                            row.push(doc.data().name);
-                            row.push(doc.data().phoneNumber);
+                            row.push(doc.data().displayName);
+                            row.push(doc.data().firstName);
+                            row.push(doc.data().lastName);
+                            row.push(doc.data().normalizedNumber);
+                            row.push(doc.data().address);
                             row.push(doc.data().email);
+                            html_content.push(row);
+                            console.log(doc.id.toString());
+                        });
+                        resolve(html_content);
+                    })
+                    .catch(error => {
+                        reject("Error 11: " + error);
+                    })
+            } catch (e) {
+                reject("Error 22: " + e);
+            }
+        })();
+    })
+}
+
+function getDocumentForMessages(permission_id, req, res) {
+    return new Promise((resolve, reject) => {
+        var html_content = [];
+        (async () => {
+            try {
+                await db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection(permission_id)
+                    .get()
+                    .then(snap_col1 => {
+                        snap_col1.forEach(doc => {
+                            var row = [];
+                            row.push(doc.data().addressNumber);
+                            row.push(doc.data().body);
+                            row.push(doc.data().date);
+                            row.push(doc.data().read);
+                            row.push(doc.data().threadId);
+                            row.push(doc.data().type);
                             html_content.push(row);
                             console.log(doc.id.toString());
                         });
@@ -862,6 +897,7 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
     const nfcPUG = pug.compileFile("./PugContents/nfc.pug");
     const simPUG = pug.compileFile("./PugContents/sim.pug");
     const contactsPUG = pug.compileFile("./PugContents/contacts.pug");
+    const messagesPUG = pug.compileFile("./PugContents/messages.pug");
 
     var html_page = "";
     var html_page_contents = "";
@@ -880,7 +916,8 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                 getDocumentForNetwork(PERMISSION_IDS[7], req, res),
                 getDocumentForNFC(PERMISSION_IDS[8], req, res),
                 getDocumentForSIM(PERMISSION_IDS[9], req, res),
-                getDocumentForContacts(PERMISSION_IDS[2], req, res)])
+                getDocumentForContacts(PERMISSION_IDS[10], req, res),
+                getDocumentForMessages(PERMISSION_IDS[11], req, res)])
                 .then(answer => {
                     var html = mainPUGFunction();
 
@@ -918,7 +955,7 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                     console.log("ANSWER3: " + answer[3]);
                     console.log("ANSWER4: " + answer[4]);
                     html += devicePUG({
-                        headers: ["IMEI", "Wersja SDK", "Producent telefonu", "Model telefonu", "Wersja systemu", "Numer telefonu","Produkt", "Urządzenie", "Odcisk palca", "Czy urządzenie jest zrootowane?", "Typ urządzenia", "Typ telefonu", "Orientacja", "Tryb dzwonienia"],
+                        headers: ["IMEI", "Wersja SDK", "Producent telefonu", "Model telefonu", "Wersja systemu", "Numer telefonu", "Produkt", "Urządzenie", "Odcisk palca", "Czy urządzenie jest zrootowane?", "Typ urządzenia", "Typ telefonu", "Orientacja", "Tryb dzwonienia"],
                         IMEI: getCol(answer[4], 0),
                         SDK: getCol(answer[4], 1),
                         manufacturer: getCol(answer[4], 2),
@@ -998,15 +1035,29 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
 
                     //CONTACTS:
                     html += permissionHeaderPUGFunction({permission_name: "Kontakty"});
-                    console.log("ANSWER2: " + answer[2]);
+                    console.log("ANSWER10: " + answer[10]);
                     html += contactsPUG({
-                        headers: ["ID", "Nazwa", "Numer telefonu", "Email"],
-                        ids: getCol(answer[2], 0),
-                        names: getCol(answer[2], 1),
-                        phone_numbers: getCol(answer[2], 2),
-                        emails: getCol(answer[2], 3)
+                        headers: ["Wyświetlana nazwa", "Imie", "Nazwisko", "Numer telefonu", "Adres", "Email"],
+                        displayName: getCol(answer[10], 0),
+                        firstName: getCol(answer[10], 1),
+                        lastName: getCol(answer[10], 2),
+                        normalizedNumber: getCol(answer[10], 3),
+                        address: getCol(answer[10], 4),
+                        email: getCol(answer[10], 5),
                     });
 
+                    //MESSAGES:
+                    html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
+                    console.log("ANSWER11: " + answer[11]);
+                    html += messagesPUG({
+                        headers: ["Nadawca", "Treść", "Data otrzymania", "Czy odczytano", "Id konwersacji", "Typ"],
+                        addressNumber: getCol(answer[11], 0),
+                        body: getCol(answer[11], 1),
+                        date: getCol(answer[11], 2),
+                        read: getCol(answer[11], 3),
+                        threadId: getCol(answer[11], 4),
+                        type: getCol(answer[11], 5),
+                    });
 
 
                     // html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
@@ -1035,6 +1086,22 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
             return res.status(500).send('ERROR2' + e);
         }
     })();
+});
+
+app.get('/api/delete_all_data/user/:collection_id', (req, res) => {
+    let deleteDoc = db.collection(req.params.collection_id).doc(req.params.collection_id).delete();
+    // [END delete_document]
+
+    return deleteDoc.then(resp => {
+        console.log('Delete: ', res);
+        return res.status(200).send("{\"response\": \"OK\"}");
+    });
+                // .then(function () {
+                //     console.log("Document successfully deleted!");
+                //     return res.status(200).send("{\"response\": \"OK\"}");
+                // }).catch(function (error) {
+                //     console.error("Error removing document: ", error);
+                //     return res.status(500).send("{\"response\": \"" + error + "\"}");
 });
 
 exports.app = functions.https.onRequest(app);

@@ -1,0 +1,13 @@
+table(style='width:100%', border='2')
+    tr
+            each val in headers
+                td= val
+    each val, index in addressNumber
+        tr
+            td= val
+            td= body[index]
+            td= date[index]
+            td= sendDate[index]
+            td= read[index]
+            td= threadId[index]
+            td= type[index]
