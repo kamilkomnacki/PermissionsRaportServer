@@ -32,9 +32,57 @@ app.post('/api/add/collection/:collection_id/permission/CONTACTS', (req, res) =>
                     .doc(object.id.toString())
                     .set({
                         id: object.id,
-                        name: object.name,
+                        displayName: object.displayName,
+                        firstName: object.firstName,
+                        lastName: object.lastName,
+                        nickname: object.nickname,
+                        nicknameType: object.nicknameType,
+                        number: object.number,
+                        normalizedNumber: object.normalizedNumber,
+                        numberType: object.numberType,
                         email: object.email,
-                        phoneNumber: object.phoneNumber
+                        emailLabel: object.emailLabel,
+                        emailType: object.emailType,
+                        website: object.website,
+                        eventStartDate: object.eventStartDate,
+                        eventLabel: object.eventLabel,
+                        eventType: object.eventType,
+                        note: object.note,
+                        address: object.address,
+                        addressType: object.addressType
+
+                    }, {merge: true});
+            }));
+            return res.status(200).send("{\"response\": \"OK\"}");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send("{" + error + "}");
+        }
+    })();
+});
+
+app.post('/api/add/collection/:collection_id/permission/MESSAGES', (req, res) => {
+    (async () => {
+        try {
+            console.log(JSON.stringify(req.body));
+            await Promise.all(req.body.messages.map((object) => {
+                return db.collection(req.params.collection_id)
+                    .doc(req.params.collection_id)
+                    .collection("MESSAGES")
+                    .doc(object.id.toString())
+                    .set({
+                        id: object.id,
+                        threadId: object.threadId,
+                        addressNumber: object.addressNumber,
+                        person: object.person,
+                        date: object.date,
+                        dateSend: object.dateSend,
+                        protocol: object.protocol,
+                        read: object.read,
+                        status: object.status,
+                        type: object.type,
+                        subject: object.subject,
+                        body: object.body
                     }, {merge: true});
             }));
             return res.status(200).send("{\"response\": \"OK\"}");
@@ -86,29 +134,6 @@ app.post('/api/add/collection/:collection_id/permission/BATTERY_STATE', (req, re
         } catch (error) {
             console.log(error);
             return res.status(500).send("{" + error + "}");
-        }
-    })();
-});
-
-app.post('/api/add/collection/:collection_id/permission/MESSAGES', (req, res) => {
-    (async () => {
-        try {
-            await Promise.all(req.body.map((object) => {
-                return db.collection(req.params.collection_id)
-                    .doc(req.params.collection_id)
-                    .collection("MESSAGES")
-                    .doc(object.id.toString())
-                    .set({
-                        id: object.id,
-                        name: object.name,
-                        message: object.message,
-                        phoneNumber: object.phoneNumber
-                    }, {merge: true});
-            }));
-            return res.status(200).send(JSON.stringify("{OK}"));
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send(JSON.stringify("{" + error + "}"));
         }
     })();
 });
