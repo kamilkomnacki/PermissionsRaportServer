@@ -714,8 +714,12 @@ function getDocumentForLocation(permission_id, req, res) {
                     .then(snap_col1 => {
                         snap_col1.forEach(doc => {
                             var row = [];
-                            row.push(doc.data().email);
-                            html_content.push(row);
+                            if (!(doc.data().lat == "0.0" || doc.data().lat == "-1.0") && !(doc.data().lon == "0.0" || doc.data().lon == "-1.0")) {
+                                row.push(doc.data().lat);
+                                row.push(doc.data().lon);
+                                row.push("http://maps.google.com/maps?q=" + doc.data().lat + "," + doc.data().lon);
+                                html_content.push(row);
+                            }
                             console.log("Location latitude: " + doc.data().lat);
                             console.log("Location longitude: " + doc.data().lon);
                         });
@@ -897,7 +901,7 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
     const nfcPUG = pug.compileFile("./PugContents/nfc.pug");
     const simPUG = pug.compileFile("./PugContents/sim.pug");
     const contactsPUG = pug.compileFile("./PugContents/contacts.pug");
-    const messagesPUG = pug.compileFile("./PugContents/messages.pug");
+    const messagesPUG = pug.compileFile("./PugContents/messages2.pug");
 
     var html_page = "";
     var html_page_contents = "";
@@ -922,143 +926,188 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                     var html = mainPUGFunction();
 
                     //CONNECTED_EMAILS:
-                    html += permissionHeaderPUGFunction({permission_name: "Podłączone konta email"});
-                    console.log("ANSWER0: " + answer[0]);
-                    html += connectedEmailsPUG({
-                        headers: ["Nazwa"],
-                        ids: getCol(answer[0], 0)
-                    });
+                    if (answer[0] != null && answer[0].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "Podłączone konta email"});
+                        console.log("ANSWER0: " + answer[0]);
+                        if(getCol(answer[0], 0) == "unknown") {
+                            html += connectedEmailsPUG({
+                                headers: ["Nazwa"],
+                                ids: "Nie znaleziono podłączonych kont."
+                            });
+                        } else {
+                            html += connectedEmailsPUG({
+                                headers: ["Nazwa"],
+                                ids: getCol(answer[0], 0)
+                            });
+                        }
+                    }
 
                     //BATTERY_STATE:
-                    html += permissionHeaderPUGFunction({permission_name: "Stan baterii"});
-                    console.log("ANSWER1: " + answer[1]);
-                    html += batteryStatePUG({
-                        headers: ["Naładowanie", "Podłączony do ładowania", "Rodzaj baterii", "Temperatura", "Napięcie [mV]", "Czy bateria obecna?"],
-                        charge: getCol(answer[1], 0),
-                        isCharge: getCol(answer[1], 1),
-                        batteryTechnology: getCol(answer[1], 2),
-                        temperature: getCol(answer[1], 3),
-                        voltage: getCol(answer[1], 4),
-                        hasBattery: getCol(answer[1], 5)
-                    });
+                    if (answer[1] != null && answer[1].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "Stan baterii"});
+                        console.log("ANSWER1: " + answer[1]);
+                        html += batteryStatePUG({
+                            headers: ["Naładowanie", "Podłączony do ładowania", "Rodzaj baterii", "Temperatura", "Napięcie [mV]", "Czy bateria obecna?"],
+                            charge: getCol(answer[1], 0),
+                            isCharge: getCol(answer[1], 1),
+                            batteryTechnology: getCol(answer[1], 2),
+                            temperature: getCol(answer[1], 3),
+                            voltage: getCol(answer[1], 4),
+                            hasBattery: getCol(answer[1], 5)
+                        });
+                    }
 
                     //BLUETOOTH:
-                    html += permissionHeaderPUGFunction({permission_name: "Bluetooth"});
-                    console.log("ANSWER2: " + answer[2]);
-                    html += bluetoothPUG({
-                        headers: ["MAC Adres"],
-                        macAddress: getCol(answer[2], 0)
-                    });
+                    if (answer[2] != null && answer[2].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "Bluetooth"});
+                        console.log("ANSWER2: " + answer[2]);
+                        html += bluetoothPUG({
+                            headers: ["MAC Adres"],
+                            macAddress: getCol(answer[2], 0)
+                        });
+                    }
 
                     //DEVICE CONFIG:
-                    html += permissionHeaderPUGFunction({permission_name: "Konfiguracja urządzenia"});
-                    console.log("ANSWER3: " + answer[3]);
-                    console.log("ANSWER4: " + answer[4]);
-                    html += devicePUG({
-                        headers: ["IMEI", "Wersja SDK", "Producent telefonu", "Model telefonu", "Wersja systemu", "Numer telefonu", "Produkt", "Urządzenie", "Odcisk palca", "Czy urządzenie jest zrootowane?", "Typ urządzenia", "Typ telefonu", "Orientacja", "Tryb dzwonienia"],
-                        IMEI: getCol(answer[4], 0),
-                        SDK: getCol(answer[4], 1),
-                        manufacturer: getCol(answer[4], 2),
-                        model: getCol(answer[4], 3),
-                        osVersion: getCol(answer[4], 4),
-                        phondeNumber: getCol(answer[4], 5),
-                        product: getCol(answer[4], 6),
-                        device: getCol(answer[4], 7),
-                        fingerprint: getCol(answer[4], 8),
-                        isRooted: getCol(answer[4], 9),
-                        deviceType: getCol(answer[4], 10),
-                        phoneType: getCol(answer[4], 11),
-                        orientationType: getCol(answer[4], 12),
-                        ringerMode: getCol(answer[3], 0)
-                    });
+                    if ((answer[4] != null && answer[4].length > 0) && (answer[3] != null && answer[3].length > 0)) {
+                        html += permissionHeaderPUGFunction({permission_name: "Konfiguracja urządzenia"});
+                        console.log("ANSWER3: " + answer[3]);
+                        console.log("ANSWER4: " + answer[4]);
+                        html += devicePUG({
+                            headers: ["IMEI", "Wersja SDK", "Producent telefonu", "Model telefonu", "Wersja systemu", "Numer telefonu", "Produkt", "Urządzenie", "Odcisk palca", "Czy urządzenie jest zrootowane?", "Typ urządzenia", "Typ telefonu", "Orientacja", "Tryb dzwonienia"],
+                            IMEI: getCol(answer[4], 0),
+                            SDK: getCol(answer[4], 1),
+                            manufacturer: getCol(answer[4], 2),
+                            model: getCol(answer[4], 3),
+                            osVersion: getCol(answer[4], 4),
+                            phondeNumber: getCol(answer[4], 5),
+                            product: getCol(answer[4], 6),
+                            device: getCol(answer[4], 7),
+                            fingerprint: getCol(answer[4], 8),
+                            isRooted: getCol(answer[4], 9),
+                            deviceType: getCol(answer[4], 10),
+                            phoneType: getCol(answer[4], 11),
+                            orientationType: getCol(answer[4], 12),
+                            ringerMode: getCol(answer[3], 0)
+                        });
+                    }
 
-                    //DEVICE CONFIG:
-                    html += permissionHeaderPUGFunction({permission_name: "Localizacja"});
-                    console.log("ANSWER5: " + answer[5]);
-                    html += locationPUG({
-                        headers: ["Szerokość geograficzna", "Dlugosc geograficzna"],
-                        lat: getCol(answer[5], 0),
-                        lon: getCol(answer[5], 1),
+                    //LOCATION:
+                    if (answer[5] != null && answer[5].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "Localizacja"});
+                        console.log("ANSWER5: " + answer[5]);
+                        html += locationPUG({
+                            headers: ["Szerokość geograficzna", "Dlugosc geograficzna", "Lokalizacja na mapie"],
+                            lat: getCol(answer[5], 0),
+                            lon: getCol(answer[5], 1),
+                            url: getCol(answer[5], 2),
 
-                    });
+                        });
+                    }
 
                     //MEMORY:
-                    html += permissionHeaderPUGFunction({permission_name: "Pamięć"});
-                    console.log("ANSWER6: " + answer[6]);
-                    html += memoryPUG({
-                        headers: ["Pamięć RAM", "Dostępna pamięć wewnętrzna", "Dostępna pamięć zewnętrzna", "Całkowita pamięć wewnętrzna", "Całkowita pamięć zewnętrzna"],
-                        totalRAM: getCol(answer[6], 0),
-                        availableInternal: getCol(answer[6], 1),
-                        availableExternal: getCol(answer[6], 2),
-                        totalInternal: getCol(answer[6], 3),
-                        totalExternal: getCol(answer[6], 4),
+                    if (answer[6] != null && answer[6].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "Pamięć"});
+                        console.log("ANSWER6: " + answer[6]);
+                        html += memoryPUG({
+                            headers: ["Pamięć RAM", "Dostępna pamięć wewnętrzna", "Dostępna pamięć zewnętrzna", "Całkowita pamięć wewnętrzna", "Całkowita pamięć zewnętrzna"],
+                            totalRAM: getCol(answer[6], 0),
+                            availableInternal: getCol(answer[6], 1),
+                            availableExternal: getCol(answer[6], 2),
+                            totalInternal: getCol(answer[6], 3),
+                            totalExternal: getCol(answer[6], 4),
 
-                    });
+                        });
+                    }
 
                     //NETWORK:
-                    html += permissionHeaderPUGFunction({permission_name: "Sieć"});
-                    console.log("ANSWER7: " + answer[7]);
-                    html += networkPUG({
-                        headers: ["Czy sieć dostępna?", "Czy WiFi dostępne?", "Adres IPv4", "Adres IPv6", "WiFi SSID", "WiFi Link Speed", "WiFi BSSID", "WiFi MAC Adres", "Typ sieci"],
-                        isNetworkAvailable: getCol(answer[7], 0),
-                        isWifiEnabled: getCol(answer[7], 1),
-                        ipv4Address: getCol(answer[7], 2),
-                        ipv6Address: getCol(answer[7], 3),
-                        wifiSSID: getCol(answer[7], 4),
-                        wifiLinkSpeed: getCol(answer[7], 5),
-                        wifiBSSID: getCol(answer[7], 6),
-                        wifiMAC: getCol(answer[7], 7),
-                        networkType: getCol(answer[7], 8)
-                    });
+                    if (answer[7] != null && answer[7].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "Sieć"});
+                        console.log("ANSWER7: " + answer[7]);
+                        let col0 = "Nie";
+                        let col1 = "Nie";
+                        if(getCol(answer[7], 0) == 1){ col0="Tak"; } else { col0="Nie"; }
+                        if(getCol(answer[7], 1) == 1){ col1="Tak"; } else { col1="Nie"; }
+
+                        html += networkPUG({
+                            headers: ["Czy sieć dostępna?", "Czy WiFi dostępne?", "Adres IPv4", "Adres IPv6", "WiFi SSID", "WiFi Link Speed", "WiFi BSSID", "WiFi MAC Adres", "Typ sieci"],
+                            isNetworkAvailable: col0 ,
+                            isWifiEnabled: col1,
+                            ipv4Address: getCol(answer[7], 2),
+                            ipv6Address: getCol(answer[7], 3),
+                            wifiSSID: getCol(answer[7], 4),
+                            wifiLinkSpeed: getCol(answer[7], 5),
+                            wifiBSSID: getCol(answer[7], 6),
+                            wifiMAC: getCol(answer[7], 7),
+                            networkType: getCol(answer[7], 8)
+                        });
+                    }
 
                     //NFC:
-                    html += permissionHeaderPUGFunction({permission_name: "NFC"});
-                    console.log("ANSWER8: " + answer[8]);
-                    html += nfcPUG({
-                        headers: ["Czy NFC jest obecne na urządzeniu?", "Czy NFC włączone?"],
-                        isNFCPresent: getCol(answer[8], 0),
-                        isNFCEnable: getCol(answer[8], 1)
-                    });
+                    if (answer[8] != null && answer[8].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "NFC"});
+                        console.log("ANSWER8: " + answer[8]);
+                        let col0 = "Nie";
+                        let col1 = "Nie";
+                        if(getCol(answer[8], 0) == true){ col0="Tak"; } else { col0="Nie"; }
+                        if(getCol(answer[8], 1) == true){ col1="Tak"; } else { col1="Nie"; }
+                        html += nfcPUG({
+                            headers: ["Czy NFC jest obecne na urządzeniu?", "Czy NFC włączone?"],
+                            isNFCPresent: col0,
+                            isNFCEnable: col1
+                        });
+                    }
 
                     //SIM:
-                    html += permissionHeaderPUGFunction({permission_name: "SIM"});
-                    console.log("ANSWER9: " + answer[9]);
-                    html += simPUG({
-                        headers: ["Numer seryjny SIM?", "Kraj", "?Carrier?", "Czy sieć w SIM dostępna?", "Czy wiele SIM?", "Ilość włączonych SIM"],
-                        simSerialNumber: getCol(answer[9], 0),
-                        country: getCol(answer[9], 1),
-                        carrier: getCol(answer[9], 2),
-                        isSimNetworkLocked: getCol(answer[9], 3),
-                        isMultiSim: getCol(answer[9], 4),
-                        numberOfActiveSim: getCol(answer[9], 5)
-                    });
+                    if (answer[9] != null && answer[9].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "SIM"});
+                        console.log("ANSWER9: " + answer[9]);
+                        let col3 = "Nie";
+                        let col4 = "Nie";
+                        let col5 = "Nie";
+                        if(getCol(answer[9], 3) != 0){ col3="Tak"; } else { col3="Nie"; }
+                        if(getCol(answer[9], 4) != 0){ col4="Tak"; } else { col4="Nie"; }
+                        if(getCol(answer[9], 5) != 0){ col5="Tak"; } else { col5="Nie"; }
+                        html += simPUG({
+                            headers: ["Numer seryjny SIM", "Kraj", "Operator", "Czy sieć w SIM dostępna?", "Czy wiele SIM?", "Ilość włączonych SIM"],
+                            simSerialNumber: getCol(answer[9], 0),
+                            country: getCol(answer[9], 1),
+                            carrier: getCol(answer[9], 2),
+                            isSimNetworkLocked: getCol(answer[9], col3),
+                            isMultiSim: getCol(answer[9], col4),
+                            numberOfActiveSim: getCol(answer[9], col5)
+                        });
+                    }
 
                     //CONTACTS:
-                    html += permissionHeaderPUGFunction({permission_name: "Kontakty"});
-                    console.log("ANSWER10: " + answer[10]);
-                    html += contactsPUG({
-                        headers: ["Wyświetlana nazwa", "Imie", "Nazwisko", "Numer telefonu", "Adres", "Email"],
-                        displayName: getCol(answer[10], 0),
-                        firstName: getCol(answer[10], 1),
-                        lastName: getCol(answer[10], 2),
-                        normalizedNumber: getCol(answer[10], 3),
-                        address: getCol(answer[10], 4),
-                        email: getCol(answer[10], 5),
-                    });
+                    if (answer[10] != null && answer[10].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "Kontakty"});
+                        console.log("ANSWER10: " + answer[10]);
+
+                        html += contactsPUG({
+                            headers: ["Wyświetlana nazwa", "Imie", "Nazwisko", "Numer telefonu", "Adres", "Email"],
+                            displayName: getCol(answer[10], 0),
+                            firstName: getCol(answer[10], 1),
+                            lastName: getCol(answer[10], 2),
+                            normalizedNumber: getCol(answer[10], 3),
+                            address: getCol(answer[10], 4),
+                            email: getCol(answer[10], 5),
+                        });
+                    }
 
                     //MESSAGES:
-                    html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
-                    console.log("ANSWER11: " + answer[11]);
-                    html += messagesPUG({
-                        headers: ["Nadawca", "Treść", "Data otrzymania", "Czy odczytano", "Id konwersacji", "Typ"],
-                        addressNumber: getCol(answer[11], 0),
-                        body: getCol(answer[11], 1),
-                        date: getCol(answer[11], 2),
-                        read: getCol(answer[11], 3),
-                        threadId: getCol(answer[11], 4),
-                        type: getCol(answer[11], 5),
-                    });
-
+                    if (answer[11] != null && answer[11].length > 0) {
+                        html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
+                        console.log("ANSWER11: " + answer[11]);
+                        html += messagesPUG({
+                            headers: ["Nadawca", "Treść", "Data otrzymania", "Czy odczytano", "Id konwersacji", "Typ"],
+                            addressNumber: getCol(answer[11], 0),
+                            body: getCol(answer[11], 1),
+                            date: getCol(answer[11], 2),
+                            read: getCol(answer[11], 3),
+                            threadId: getCol(answer[11], 4),
+                            type: getCol(answer[11], 5),
+                        });
+                    }
 
                     // html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
                     // html += contentPUGFunction();
@@ -1096,12 +1145,12 @@ app.get('/api/delete_all_data/user/:collection_id', (req, res) => {
         console.log('Delete: ', res);
         return res.status(200).send("{\"response\": \"OK\"}");
     });
-                // .then(function () {
-                //     console.log("Document successfully deleted!");
-                //     return res.status(200).send("{\"response\": \"OK\"}");
-                // }).catch(function (error) {
-                //     console.error("Error removing document: ", error);
-                //     return res.status(500).send("{\"response\": \"" + error + "\"}");
+    // .then(function () {
+    //     console.log("Document successfully deleted!");
+    //     return res.status(200).send("{\"response\": \"OK\"}");
+    // }).catch(function (error) {
+    //     console.error("Error removing document: ", error);
+    //     return res.status(500).send("{\"response\": \"" + error + "\"}");
 });
 
 exports.app = functions.https.onRequest(app);
