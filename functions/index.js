@@ -932,7 +932,7 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                         if(getCol(answer[0], 0) == "unknown") {
                             html += connectedEmailsPUG({
                                 headers: ["Nazwa"],
-                                ids: "Nie znaleziono podłączonych kont."
+                                ids: ["Nie znaleziono podłączonych kont."]
                             });
                         } else {
                             html += connectedEmailsPUG({
@@ -1065,16 +1065,22 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                         let col4 = "Nie";
                         let col5 = "Nie";
                         if(getCol(answer[9], 3) != 0){ col3="Tak"; } else { col3="Nie"; }
-                        if(getCol(answer[9], 4) != 0){ col4="Tak"; } else { col4="Nie"; }
-                        if(getCol(answer[9], 5) != 0){ col5="Tak"; } else { col5="Nie"; }
+                        if(getCol(answer[9], 6) < 21){
+                            col4="Informacje o multisim dostępne od wesji systemu 5.0";
+                            col5="Informacje o multisim dostępne od wesji systemu 5.0";
+                        } else {
+                            if(getCol(answer[9], 4) != 0){ col4="Nie"; } else { col4="Tak"; } //Czy sieć niedostepna?
+                            if(getCol(answer[9], 5) != 0){ col5="Tak"; } else { col5="Nie"; }
+                        }
+
                         html += simPUG({
                             headers: ["Numer seryjny SIM", "Kraj", "Operator", "Czy sieć w SIM dostępna?", "Czy wiele SIM?", "Ilość włączonych SIM"],
                             simSerialNumber: getCol(answer[9], 0),
                             country: getCol(answer[9], 1),
                             carrier: getCol(answer[9], 2),
-                            isSimNetworkLocked: getCol(answer[9], col3),
-                            isMultiSim: getCol(answer[9], col4),
-                            numberOfActiveSim: getCol(answer[9], col5)
+                            isSimNetworkLocked: col3,
+                            isMultiSim: col4,
+                            numberOfActiveSim: col5
                         });
                     }
 
@@ -1098,14 +1104,34 @@ app.get('/api/send_email/user/:collection_id', (req, res) => {
                     if (answer[11] != null && answer[11].length > 0) {
                         html += permissionHeaderPUGFunction({permission_name: "Wiadomości"});
                         console.log("ANSWER11: " + answer[11]);
+
+                        // let col2 = "Nie";
+                        let col3 = [];
+                        let col5 = [];
+
+                        getCol(answer[11], 3).forEach(it => {
+                            if(it != 0) {
+                                col3.push("Tak")
+                            } else {
+                                col3.push("Nie")
+                            }
+                        });
+
+                        getCol(answer[11], 5).forEach(it => {
+                            if(it == 1) {
+                                col5.push("Odebrana")
+                            } else {
+                                col5.push("Wysłana")
+                            }
+                        });
                         html += messagesPUG({
-                            headers: ["Nadawca", "Treść", "Data otrzymania", "Czy odczytano", "Id konwersacji", "Typ"],
+                            headers: ["Rozmówca", "Treść", "Data otrzymania", "Czy odczytano", "Id konwersacji", "Typ"],
                             addressNumber: getCol(answer[11], 0),
                             body: getCol(answer[11], 1),
                             date: getCol(answer[11], 2),
-                            read: getCol(answer[11], 3),
+                            read: col3,
                             threadId: getCol(answer[11], 4),
-                            type: getCol(answer[11], 5),
+                            type: col5,
                         });
                     }
 

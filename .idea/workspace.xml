@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3203a32e-6a07-4a3c-b312-35402af9fcea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/functions/PugContents/messages2.pug" afterDir="false" />
+    <list default="true" id="3203a32e-6a07-4a3c-b312-35402af9fcea" name="Default Changelist" comment="format some input in raport">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/PugContents/location.pug" beforeDir="false" afterPath="$PROJECT_DIR$/functions/PugContents/location.pug" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/PugContents/memory.pug" beforeDir="false" afterPath="$PROJECT_DIR$/functions/PugContents/memory.pug" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/PugContents/messages.pug" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -99,7 +95,8 @@
       <workItem from="1575629605287" duration="4839000" />
       <workItem from="1575665303192" duration="8731000" />
       <workItem from="1575703888917" duration="3238000" />
-      <workItem from="1575720914251" duration="4381000" />
+      <workItem from="1575720914251" duration="4547000" />
+      <workItem from="1575725629689" duration="3638000" />
     </task>
     <task id="LOCAL-00001" summary="add send email, get and add methods">
       <created>1573851483593</created>
@@ -192,7 +189,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575675828980</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="format some input in raport">
+      <created>1575725449590</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1575725449590</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -225,6 +229,7 @@
     <MESSAGE value="send email information for battery, bluetooth, config, device, id, location, memory, nfc, network and sim" />
     <MESSAGE value="send message and contacts" />
     <MESSAGE value="add messages and contacts to send to raport" />
-    <option name="LAST_COMMIT_MESSAGE" value="add messages and contacts to send to raport" />
+    <MESSAGE value="format some input in raport" />
+    <option name="LAST_COMMIT_MESSAGE" value="format some input in raport" />
   </component>
 </project>
